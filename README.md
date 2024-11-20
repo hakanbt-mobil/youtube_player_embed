@@ -143,11 +143,11 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 ## Author
 
-Developed by [Your Name](https://yourwebsite.com).  
+Developed by [Mohamed Elsafty](https://www.linkedin.com/in/mohamed-safwat-elsafty/).  
 Feel free to reach out for support or feedback!
 
 ---
 
 ## Feedback & Support
 
-If you encounter any issues or have suggestions for improvement, please open an issue on [GitHub](https://github.com/your_username/youtube_player_embed/issues) or contact me at `your.email@example.com`.
+If you encounter any issues or have suggestions for improvement, please open an issue on [GitHub](https://github.com/your_username/youtube_player_embed/issues) or contact me at `nesr107@gmail.com`.
