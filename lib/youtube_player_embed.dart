@@ -4,6 +4,7 @@ import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 class YoutubePlayerView extends StatefulWidget {
   final String videoId;
   final bool autoPlay;
+  final bool enabledShareButton;
   final bool mute;
 
   const YoutubePlayerView({
@@ -11,6 +12,7 @@ class YoutubePlayerView extends StatefulWidget {
     required this.videoId,
     this.autoPlay = true,
     this.mute = false,
+    this.enabledShareButton = false,
   }) : super(key: key);
 
   @override
@@ -68,24 +70,27 @@ class _YoutubePlayerViewState extends State<YoutubePlayerView> {
             // controller.evaluateJavascript(source: javaScript);
           },
           onLoadStop: (controller, uri) async {
-            //// Inject custom CSS using JavaScript
-            await controller.evaluateJavascript(
-              source: """
+            ////
+            if (!widget.enabledShareButton) {
+              //// Inject custom CSS using JavaScript
+              await controller.evaluateJavascript(
+                source: """
               var element = document.querySelector('.ytp-overflow-button');
               if (element) {
                 element.remove();
               }
             """,
-            );
-            //// Remove the specified element using JavaScript
-            await controller.evaluateJavascript(
-              source: """
+              );
+              //// Remove the specified element using JavaScript
+              await controller.evaluateJavascript(
+                source: """
               var element = document.querySelector('.ytp-youtube-button');
               if (element) {
                 element.remove();
               }
             """,
-            );
+              );
+            }
             ////
             setState(() {
               preventTap = false;

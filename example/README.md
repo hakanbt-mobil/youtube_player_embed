@@ -2,8 +2,8 @@
 # youtube_player_embed
 
 [![Pub Version](https://img.shields.io/pub/v/youtube_player_embed)](https://pub.dev/packages/youtube_player_embed)
-[![License](https://img.shields.io/github/license/your_username/youtube_player_embed)](LICENSE)
-[![GitHub Stars](https://img.shields.io/github/stars/your_username/youtube_player_embed?style=social)](https://github.com/your_username/youtube_player_embed)
+[![License](https://img.shields.io/github/license/mohamedegy107/youtube_player_embed)](LICENSE)
+[![GitHub Stars](https://img.shields.io/github/stars/mohamedegy107/youtube_player_embed?style=social)](https://github.com/mohamedegy107/youtube_player_embed)
 
 **youtube_player_embed** is a lightweight and customizable Flutter package that allows you to embed YouTube videos into your Flutter applications using an `InAppWebView`. It provides options for autoplay, mute, and seamless integration into any UI.
 
@@ -70,6 +70,7 @@ class MyApp extends StatelessWidget {
             videoId: 'dQw4w9WgXcQ',
             autoPlay: true,
             mute: false,
+            enabledShareButton: false,
           ),
         ),
       ),
@@ -100,6 +101,7 @@ flutter run
 | **Property**   | **Type**  | **Default** | **Description**                                             |
 |----------------|-----------|-------------|-------------------------------------------------------------|
 | `videoId`      | `String`  | Required    | The YouTube video ID to embed.                              |
+| `enabledShareButton`      | `bool`  | `false`    | enabled or disabled share button                              |
 | `autoPlay`     | `bool`    | `true`      | Whether the video should autoplay upon loading.             |
 | `mute`         | `bool`    | `false`     | Whether the video should be muted by default.               |
 
@@ -131,7 +133,7 @@ flutter run
 
 ## Contributing
 
-Contributions are welcome! Feel free to open issues or submit pull requests on the [GitHub repository](https://github.com/your_username/youtube_player_embed).
+Contributions are welcome! Feel free to open issues or submit pull requests on the [GitHub repository](https://github.com/mohamedegy107/youtube_player_embed).
 
 ---
 
@@ -150,4 +152,4 @@ Feel free to reach out for support or feedback!
 
 ## Feedback & Support
 
-If you encounter any issues or have suggestions for improvement, please open an issue on [GitHub](https://github.com/your_username/youtube_player_embed/issues) or contact me at `nesr107@gmail.com`.
+If you encounter any issues or have suggestions for improvement, please open an issue on [GitHub](https://github.com/mohamedegy107/youtube_player_embed/issues) or contact me at `nesr107@gmail.com`.
