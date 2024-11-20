@@ -90,7 +90,7 @@ class MyApp extends StatelessWidget {
             autoPlay: true,
             mute: false,
             enabledShareButton: false,
-            isShort: false,
+            aspectRatio: 16 / 9,
           ),
         ),
       ),

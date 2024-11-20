@@ -8,12 +8,17 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
+      title: 'YouTube Player Embed Demo',
       home: Scaffold(
-        body: Center(
+        appBar: AppBar(
+          title: const Text('YouTube Player Example'),
+        ),
+        body: const Center(
           child: YoutubePlayerView(
-            videoId: 'pUb9EW770d0',
-            autoPlay: false,
+            videoId:
+                "pUb9EW770d0", // 'shorts_video_id' Replace with a YouTube Shorts or normal video ID
+            autoPlay: true,
             mute: false,
             enabledShareButton: false,
             aspectRatio: 16 / 9,
