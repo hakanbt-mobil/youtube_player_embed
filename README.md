@@ -9,8 +9,42 @@
 
 ---
 
+# youtube_player_embed
+
+[![Pub Version](https://img.shields.io/pub/v/youtube_player_embed)](https://pub.dev/packages/youtube_player_embed)
+[![License](https://img.shields.io/github/license/mohamedegy107/youtube_player_embed)](LICENSE)
+[![GitHub Stars](https://img.shields.io/github/stars/mohamedegy107/youtube_player_embed?style=social)](https://github.com/mohamedegy107/youtube_player_embed)
+
+**youtube_player_embed** is a lightweight and customizable Flutter package that allows you to embed YouTube videos into your Flutter applications using an `InAppWebView`. It provides options for autoplay, mute, and seamless integration into any UI.
+
+---
+
 ## Features
 
+- 🎥 **Embed YouTube Videos** easily with minimal configuration.
+- 🔄 **Autoplay Support** for instant video playback.
+- 🔇 **Mute Option** for silent playback.
+- 📱 **Responsive Design** with aspect ratio support.
+- 💡 **Customizable** and supports removing YouTube branding buttons.
+
+---
+
+## Installation
+
+Add the following dependency to your `pubspec.yaml`:
+
+```yaml
+dependencies:
+  youtube_player_embed: ^0.0.1
+```
+
+Run the following command to install the package:
+
+```bash
+flutter pub get
+```
+
+---
 - 🎥 **Embed YouTube Videos** easily with minimal configuration.
 - 🔄 **Autoplay Support** for instant video playback.
 - 🔇 **Mute Option** for silent playback.
@@ -38,6 +72,13 @@ flutter pub get
 
 ## Usage
 
+Import the package:
+
+```dart
+import 'package:youtube_player_embed/youtube_player_embed.dart';
+```
+
+Embed a YouTube video in your app:
 Import the package:
 
 ```dart
