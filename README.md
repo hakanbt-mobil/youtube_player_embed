@@ -29,8 +29,7 @@
 
 ---
 
-
-[YouTube Player Embed](https://i.ibb.co/TgHW34M/Whats-App-Image-2024-10-22-at-13-20-46-00003ce6.jpg)
+![WhatsApp Image 2024-10-22 at 13 20 46_00003ce6](https://github.com/user-attachments/assets/585796ee-52be-4233-bf17-1da517051d15)
 
 
 ## Installation
