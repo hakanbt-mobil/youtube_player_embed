@@ -48,23 +48,6 @@ flutter pub get
 
 ---
 
-## Installation
-
-Add the following dependency to your `pubspec.yaml`:
-
-```yaml
-dependencies:
-  youtube_player_embed: ^0.0.1
-```
-
-Run the following command to install the package:
-
-```bash
-flutter pub get
-```
-
----
-
 ## Usage
 
 Import the package:
