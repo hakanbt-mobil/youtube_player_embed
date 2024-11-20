@@ -4,14 +4,18 @@ import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 class YoutubePlayerView extends StatefulWidget {
   final String videoId;
   final bool autoPlay;
+
+  /// WORKING ONLY WITH VIDEOS NOT SHORTS
   final bool enabledShareButton;
   final bool mute;
+  final double? aspectRatio;
 
   const YoutubePlayerView({
     Key? key,
     required this.videoId,
     this.autoPlay = true,
     this.mute = false,
+    this.aspectRatio,
     this.enabledShareButton = false,
   }) : super(key: key);
 
@@ -42,7 +46,7 @@ class _YoutubePlayerViewState extends State<YoutubePlayerView> {
     return AbsorbPointer(
       absorbing: preventTap,
       child: AspectRatio(
-        aspectRatio: 16 / 9,
+        aspectRatio: widget.aspectRatio ?? 16 / 9,
         child: InAppWebView(
           initialUrlRequest: URLRequest(
             url: WebUri(url.replaceAll(" ", "")),

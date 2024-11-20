@@ -5,7 +5,7 @@
 [![License](https://img.shields.io/github/license/mohamedegy107/youtube_player_embed)](LICENSE)
 [![GitHub Stars](https://img.shields.io/github/stars/mohamedegy107/youtube_player_embed?style=social)](https://github.com/mohamedegy107/youtube_player_embed)
 
-**youtube_player_embed** is a lightweight and customizable Flutter package that allows you to embed YouTube videos into your Flutter applications using an `InAppWebView`. It provides options for autoplay, mute, and seamless integration into any UI.
+youtube_player_embed is a lightweight and customizable Flutter package that allows developers to embed YouTube videos, including YouTube Shorts, directly into their Flutter applications using an InAppWebView. With this package, you can seamlessly integrate videos with options like autoplay, mute, and aspect ratio customization.
 
 ---
 
@@ -15,17 +15,18 @@
 [![License](https://img.shields.io/github/license/mohamedegy107/youtube_player_embed)](LICENSE)
 [![GitHub Stars](https://img.shields.io/github/stars/mohamedegy107/youtube_player_embed?style=social)](https://github.com/mohamedegy107/youtube_player_embed)
 
-**youtube_player_embed** is a lightweight and customizable Flutter package that allows you to embed YouTube videos into your Flutter applications using an `InAppWebView`. It provides options for autoplay, mute, and seamless integration into any UI.
+youtube_player_embed is a lightweight and customizable Flutter package that allows developers to embed YouTube videos, including YouTube Shorts, directly into their Flutter applications using an InAppWebView. With this package, you can seamlessly integrate videos with options like autoplay, mute, and aspect ratio customization.
 
 ---
 
 ## Features
 
-- 🎥 **Embed YouTube Videos** easily with minimal configuration.
+- 🎥 **Embed YouTube Videos and Shorts** easily with minimal configuration.
 - 🔄 **Autoplay Support** for instant video playback.
 - 🔇 **Mute Option** for silent playback.
-- 📱 **Responsive Design** with aspect ratio support.
-- 💡 **Customizable** and supports removing YouTube branding buttons.
+- 📱 **Responsive Design** supporting both horizontal (16:9) and vertical (9:16) videos.
+- 💡 **Customizable** options to remove YouTube branding buttons for a cleaner UI.
+- 🔗 **Direct Shorts Integration** for embedding vertical YouTube Shorts seamlessly.
 
 ---
 
@@ -47,12 +48,12 @@ Run the following command to install the package:
 flutter pub get
 ```
 
----
-- 🎥 **Embed YouTube Videos** easily with minimal configuration.
+- 🎥 **Embed YouTube Videos and Shorts** easily with minimal configuration.
 - 🔄 **Autoplay Support** for instant video playback.
 - 🔇 **Mute Option** for silent playback.
-- 📱 **Responsive Design** with aspect ratio support.
-- 💡 **Customizable** and supports removing YouTube branding buttons.
+- 📱 **Responsive Design** supporting both horizontal (16:9) and vertical (9:16) videos.
+- 💡 **Customizable** options to remove YouTube branding buttons for a cleaner UI.
+- 🔗 **Direct Shorts Integration** for embedding vertical YouTube Shorts seamlessly.
 
 ---
 
@@ -111,10 +112,11 @@ class MyApp extends StatelessWidget {
         ),
         body: Center(
           child: YoutubePlayerView(
-            videoId: 'dQw4w9WgXcQ',
+            videoId: videoId: 'shorts_video_id', // Replace with a YouTube Shorts or normal video ID
             autoPlay: true,
             mute: false,
             enabledShareButton: false,
+            isShort: false,
           ),
         ),
       ),
@@ -145,6 +147,7 @@ flutter run
 | **Property**   | **Type**  | **Default** | **Description**                                             |
 |----------------|-----------|-------------|-------------------------------------------------------------|
 | `videoId`      | `String`  | Required    | The YouTube video ID to embed.                              |
+| `aspectRatio`      | `double`  | null    | Aspect ratio of video.                              |
 | `enabledShareButton`      | `bool`  | `false`    | enabled or disabled share button                              |
 | `autoPlay`     | `bool`    | `true`      | Whether the video should autoplay upon loading.             |
 | `mute`         | `bool`    | `false`     | Whether the video should be muted by default.               |
