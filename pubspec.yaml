@@ -1,0 +1,16 @@
+name: youtube_player_embed
+description: A Flutter package for embedding YouTube videos with customizable options.
+version: 0.0.1
+# author: Your Name Mohamed Elsafty
+homepage: https://github.com/mohamedegy107/youtube_player_embed
+
+environment:
+  sdk: ">=2.17.0 <3.0.0"
+  flutter: ">=2.5.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_inappwebview: ^6.0.0
+
+
