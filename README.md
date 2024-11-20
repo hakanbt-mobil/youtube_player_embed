@@ -1,13 +1,4 @@
 
-# youtube_player_embed
-
-[![Pub Version](https://img.shields.io/pub/v/youtube_player_embed)](https://pub.dev/packages/youtube_player_embed)
-[![License](https://img.shields.io/github/license/mohamedegy107/youtube_player_embed)](LICENSE)
-[![GitHub Stars](https://img.shields.io/github/stars/mohamedegy107/youtube_player_embed?style=social)](https://github.com/mohamedegy107/youtube_player_embed)
-
-youtube_player_embed is a lightweight and customizable Flutter package that allows developers to embed YouTube videos, including YouTube Shorts, directly into their Flutter applications using an InAppWebView. With this package, you can seamlessly integrate videos with options like autoplay, mute, and aspect ratio customization.
-
----
 
 # youtube_player_embed
 
@@ -147,8 +138,8 @@ flutter run
 | **Property**   | **Type**  | **Default** | **Description**                                             |
 |----------------|-----------|-------------|-------------------------------------------------------------|
 | `videoId`      | `String`  | Required    | The YouTube video ID to embed.                              |
-| `aspectRatio`      | `double`  | null    | Aspect ratio of video.                              |
-| `enabledShareButton`      | `bool`  | `false`    | enabled or disabled share button                              |
+| `aspectRatio`      | `double`  | null    | Aspect ratio of video.                                      |
+| `enabledShareButton`      | `bool`  | `false`    | enabled or disabled share button                    |
 | `autoPlay`     | `bool`    | `true`      | Whether the video should autoplay upon loading.             |
 | `mute`         | `bool`    | `false`     | Whether the video should be muted by default.               |
 
