@@ -76,30 +76,79 @@ class _YoutubePlayerViewState extends State<YoutubePlayerView> {
           onLoadStop: (controller, uri) async {
             ////
             if (!widget.enabledShareButton) {
-              //// Inject custom CSS using JavaScript
+              // Remove overflow button (three dots menu)
               await controller.evaluateJavascript(
                 source: """
               var element = document.querySelector('.ytp-overflow-button');
               if (element) {
                 element.remove();
               }
-            """,
+              """,
               );
-              //// Remove the specified element using JavaScript
+
+              // Remove YouTube button
               await controller.evaluateJavascript(
                 source: """
               var element = document.querySelector('.ytp-youtube-button');
               if (element) {
                 element.remove();
               }
+              """,
+              );
+
+              // Remove Share button
+              await controller.evaluateJavascript(
+                source: """
+              var shareButton = document.querySelector('.ytp-share-button');
+              if (shareButton) {
+                shareButton.remove();
+              }
+              """,
+              );
+
+              // Remove More Options from settings menu
+              await controller.evaluateJavascript(
+                source: """
+              function removeUnwantedElements() {
+                // Remove More Options from settings menu
+                const settingsMenu = document.querySelector('.ytp-settings-menu');
+                if (settingsMenu) {
+                  const menuItems = settingsMenu.querySelectorAll('.ytp-menuitem');
+                  menuItems.forEach(item => {
+                    if (item.textContent.includes('More options')) {
+                      item.remove();
+                    }
+                  });
+                }
+                
+                // Ensure Share button stays removed
+                const shareButton = document.querySelector('.ytp-share-button');
+                if (shareButton) {
+                  shareButton.remove();
+                }
+              }
+              
+              // Initial removal
+              removeUnwantedElements();
+              
+              // Observer for dynamic content
+              const observer = new MutationObserver(() => {
+                removeUnwantedElements();
+              });
+              
+              // Start observing the document for added nodes
+              observer.observe(document.body, {
+                childList: true,
+                subtree: true
+              });
             """,
               );
-            }
             ////
             setState(() {
               preventTap = false;
             });
             ////
+            },
           },
         ),
       ),
