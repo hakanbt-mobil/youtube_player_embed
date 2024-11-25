@@ -143,12 +143,14 @@ class _YoutubePlayerViewState extends State<YoutubePlayerView> {
               });
             """,
               );
-            ////
-            setState(() {
-              preventTap = false;
-            });
-            ////
-            },
+              ////
+              setState(
+                () {
+                  preventTap = false;
+                },
+              );
+              ////
+            }
           },
         ),
       ),
