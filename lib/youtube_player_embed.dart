@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 
+import 'enum/video_state.dart';
+
 class YoutubePlayerView extends StatefulWidget {
   final String videoId;
   final bool autoPlay;
@@ -9,7 +11,10 @@ class YoutubePlayerView extends StatefulWidget {
   final bool enabledShareButton;
   final bool mute;
   final double? aspectRatio;
-
+  final VoidCallback? onVideoEnd;
+  final Function(double currentTime)? onVideoSeek;
+  final Function(double currentTime)? onVideoTimeUpdate;
+  final Function(VideoState state)? onVideoStateChange;
   const YoutubePlayerView({
     Key? key,
     required this.videoId,
@@ -17,6 +22,10 @@ class YoutubePlayerView extends StatefulWidget {
     this.mute = false,
     this.aspectRatio,
     this.enabledShareButton = false,
+    this.onVideoEnd,
+    this.onVideoSeek,
+    this.onVideoTimeUpdate,
+    this.onVideoStateChange,
   }) : super(key: key);
 
   @override
@@ -63,7 +72,65 @@ class _YoutubePlayerViewState extends State<YoutubePlayerView> {
           shouldOverrideUrlLoading: (controller, navigationAction) async {
             return NavigationActionPolicy.CANCEL;
           },
-          onWebViewCreated: (controller) {},
+          onWebViewCreated: (controller) {
+            // JavaScript handlers for different events
+            controller.addJavaScriptHandler(
+              handlerName: 'onVideoEnd',
+              callback: (args) {
+                widget.onVideoEnd?.call();
+                print('<<< Video ended >>>');
+                return null;
+              },
+            );
+            controller.addJavaScriptHandler(
+              handlerName: 'onVideoSeek',
+              callback: (args) {
+                final currentTime = args.first as double;
+                widget.onVideoSeek?.call(currentTime);
+                print('<<< Video seeked to: $currentTime seconds >>>');
+                return null;
+              },
+            );
+            controller.addJavaScriptHandler(
+              handlerName: 'onVideoTimeUpdate',
+              callback: (args) {
+                final currentTime = args.first as double;
+                widget.onVideoTimeUpdate?.call(currentTime);
+                print('<<< Current video time: $currentTime seconds >>>');
+                return null;
+              },
+            );
+
+            controller.addJavaScriptHandler(
+              handlerName: 'onVideoStateChange',
+              callback: (args) {
+                final String state = args.first;
+                VideoState? videoState;
+
+                switch (state) {
+                  case 'playing':
+                    videoState = VideoState.playing;
+                    break;
+                  case 'paused':
+                    videoState = VideoState.paused;
+                    break;
+                  case 'muted':
+                    videoState = VideoState.muted;
+                    break;
+                  case 'unmuted':
+                    videoState = VideoState.unmuted;
+                    break;
+                }
+
+                if (videoState != null) {
+                  widget.onVideoStateChange?.call(videoState);
+                  print('<<< Video state changed: $state >>>');
+                }
+
+                return null;
+              },
+            );
+          },
           onContentSizeChanged: (controller, width, height) async {
             // controller.evaluateJavascript(source: javaScript);
           },
@@ -74,6 +141,65 @@ class _YoutubePlayerViewState extends State<YoutubePlayerView> {
             // controller.evaluateJavascript(source: javaScript);
           },
           onLoadStop: (controller, uri) async {
+            // Inject JavaScript to listen for video events
+            await controller.evaluateJavascript(
+              source: """
+    // Ensure the video element is loaded
+    const checkVideoElement = () => {
+      const video = document.querySelector('video');
+      if (video) {
+        console.log('Video element found.');
+
+        // Add event listeners for video state changes
+        video.addEventListener('play', () => {
+          console.log('Video is playing.');
+          window.flutter_inappwebview.callHandler('onVideoStateChange', 'playing');
+        });
+
+        video.addEventListener('pause', () => {
+          console.log('Video is paused.');
+          if(!video.ended){
+            window.flutter_inappwebview.callHandler('onVideoStateChange', 'paused');
+          }
+        });
+
+        video.addEventListener('ended', () => {
+          console.log('Video ended.');
+          window.flutter_inappwebview.callHandler('onVideoEnd');
+        });
+
+        video.addEventListener('seeking', () => {
+          console.log('Video seeking to: ', video.currentTime);
+          window.flutter_inappwebview.callHandler('onVideoSeek', video.currentTime);
+        });
+
+        video.addEventListener('timeupdate', () => {
+          console.log('Current video time: ', video.currentTime);
+          window.flutter_inappwebview.callHandler('onVideoTimeUpdate', video.currentTime);
+        });
+
+// Detect mute and unmute events using the 'muted' property
+        let wasMuted = video.muted;
+        setInterval(() => {
+          if (video.muted && !wasMuted) {
+            console.log('Video muted.');
+            window.flutter_inappwebview.callHandler('onVideoStateChange', 'muted');
+          } else if (!video.muted && wasMuted) {
+            console.log('Video unmuted.');
+            window.flutter_inappwebview.callHandler('onVideoStateChange', 'unmuted');
+          }
+          wasMuted = video.muted;
+        }, 500);
+      } else {
+        console.log('Video element not found. Retrying...');
+        setTimeout(checkVideoElement, 500); // Retry until video is available
+      }
+    };
+    // Start checking for the video element
+    checkVideoElement();
+    """,
+            );
+
             ////
             if (!widget.enabledShareButton) {
               // Remove overflow button (three dots menu)
