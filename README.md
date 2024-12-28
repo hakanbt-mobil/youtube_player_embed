@@ -19,10 +19,13 @@
 - ⏰ **Advanced Event Listeners** for video state updates, time tracking, seek events, and mute/unmute detection.
 - 🔑 **Enhanced Control** to programmatically remove share and branding buttons dynamically.
 - ⏯ **Full-Screen Support** with seamless entry and exit.
+- ⏹️ **Playback Controls**: Play, Pause, Seek, Mute, and Unmute programmatically.
+- 🔍 **Custom Video Titles**: Dynamically set or hide video titles.
+- 🚀 **Performance Optimized**: Lightweight and efficient for a smoother user experience.
 
 ---
 
-![WhatsApp Image](https://github.com/user-attachments/assets/585796ee-52be-4233-bf17-1da517051d15)
+![image](https://github.com/user-attachments/assets/c62ef628-33bd-4bfd-8e3e-aac36e74d991)
 
 ---
 
@@ -32,7 +35,7 @@ Add the following dependency to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  youtube_player_embed: ^1.1.0
+  youtube_player_embed: ^1.2.0
 ```
 
 Run the following command to install the package:
@@ -74,42 +77,33 @@ class MyApp extends StatelessWidget {
         ),
         body: Center(
           child: YoutubePlayerView(
-              videoId:'shorts_video_id', // Replace with a YouTube Shorts or normal video ID
-              autoPlay: true,
-              mute: false,
-              enabledShareButton: false,
-              aspectRatio: 16 / 9,
-              onVideoEnd: () {
-                if (listOfVideos.isNotEmpty) {
-                  print("video ended");
-                } else {
-                  // Handle when the list is empty
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('No more videos to play!')),
-                  );
-                }
-              },
-              onVideoSeek: (currentTime) =>
-                  print("Seeked to $currentTime seconds"),
-              onVideoStateChange: (state) {
-                switch (state) {
-                  case VideoState.playing:
-                    print("Video is playing");
-                    break;
-                  case VideoState.paused:
-                    print("Video is paused");
-                    break;
-                  case VideoState.muted:
-                    print("Video is muted");
-                    break;
-                  case VideoState.unmuted:
-                    print("Video is unmuted");
-                    break;
-                }
-              },
-              onVideoTimeUpdate: (currentTime) =>
-                  print("Current time: $currentTime seconds"),
-              ),
+            videoId: 'shorts_video_id', // Replace with a YouTube Shorts or normal video ID
+            autoPlay: true,
+            mute: false,
+            enabledShareButton: false,
+            aspectRatio: 16 / 9,
+            onVideoEnd: () {
+              print("Video has ended");
+            },
+            onVideoSeek: (currentTime) => print("Seeked to $currentTime seconds"),
+            onVideoStateChange: (state) {
+              switch (state) {
+                case VideoState.playing:
+                  print("Video is playing");
+                  break;
+                case VideoState.paused:
+                  print("Video is paused");
+                  break;
+                case VideoState.muted:
+                  print("Video is muted");
+                  break;
+                case VideoState.unmuted:
+                  print("Video is unmuted");
+                  break;
+              }
+            },
+            onVideoTimeUpdate: (currentTime) => print("Current time: $currentTime seconds"),
+          ),
         ),
       ),
     );
@@ -147,6 +141,9 @@ flutter run
 | `onVideoSeek`          | `Function(double)?`         | null        | Callback triggered when the video seek occurs.              |
 | `onVideoTimeUpdate`    | `Function(double)?`         | null        | Callback triggered on video time updates.                  |
 | `onVideoStateChange`   | `Function(VideoState)?`     | null        | Callback triggered on video state changes (play/pause/etc). |
+| `customVideoTitle`     | `String?`                   | null        | Custom title for the video displayed on top.               |
+| `hidenVideoControls`   | `bool`                      | `false`     | Whether to hide the video controls.                        |
+| `hidenChannelImage`    | `bool`                      | `true`      | Whether to hide the channel image.                         |
 
 ---
 
@@ -176,7 +173,13 @@ flutter run
 
 ## Changelog
 
-### vv1.1.0
+### v1.2.0
+- Added programmatic playback controls: Play, Pause, Seek, Mute, Unmute.
+- Added support for custom video titles.
+- Enhanced dynamic hiding of video controls and channel images.
+- Improved error handling for invalid video IDs.
+
+### v1.1.0
 - Added advanced event listeners for video state, time updates, and seek events.
 - Added mute/unmute detection.
 - Improved support for dynamic UI updates to remove share and branding buttons.
@@ -206,4 +209,3 @@ Feel free to reach out for support or feedback!
 ## Feedback & Support
 
 If you encounter any issues or have suggestions for improvement, please open an issue on [GitHub](https://github.com/mohamedegy107/youtube_player_embed/issues) or contact me at `nesr107@gmail.com`.
-

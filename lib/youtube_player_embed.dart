@@ -1,25 +1,38 @@
+//// IMPORTS
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 
+import 'controller/embed_controller.dart';
+import 'controller/video_controller.dart';
 import 'enum/video_state.dart';
 
-class YoutubePlayerView extends StatefulWidget {
+//// YOUTUBE PLAYER VIEW WIDGET
+class YoutubePlayerEmbed extends StatefulWidget {
+  //// PROPERTIES
   final String videoId;
+  final String? customVideoTitle;
   final bool autoPlay;
-
-  /// WORKING ONLY WITH VIDEOS NOT SHORTS
+  final bool hidenVideoControls;
   final bool enabledShareButton;
   final bool mute;
+  final bool hidenChannelImage;
   final double? aspectRatio;
   final VoidCallback? onVideoEnd;
   final Function(double currentTime)? onVideoSeek;
   final Function(double currentTime)? onVideoTimeUpdate;
   final Function(VideoState state)? onVideoStateChange;
-  const YoutubePlayerView({
+  final Function(VideoController)? callBackVideoController;
+
+  //// CONSTRUCTOR
+  YoutubePlayerEmbed({
     Key? key,
     required this.videoId,
+    this.callBackVideoController,
+    this.customVideoTitle,
     this.autoPlay = true,
+    this.hidenVideoControls = false,
     this.mute = false,
+    this.hidenChannelImage = true,
     this.aspectRatio,
     this.enabledShareButton = false,
     this.onVideoEnd,
@@ -28,28 +41,34 @@ class YoutubePlayerView extends StatefulWidget {
     this.onVideoStateChange,
   }) : super(key: key);
 
+  //// CREATE STATE
   @override
-  State<YoutubePlayerView> createState() => _YoutubePlayerViewState();
+  State<YoutubePlayerEmbed> createState() => _YoutubePlayerEmbedState();
 }
 
-class _YoutubePlayerViewState extends State<YoutubePlayerView> {
+//// YOUTUBE PLAYER VIEW STATE
+class _YoutubePlayerEmbedState extends State<YoutubePlayerEmbed> {
+  //// VARIABLES
   bool preventTap = true;
-
   String url = '';
+  EmbedController? embedController;
 
+  //// INIT STATE
   @override
   void initState() {
+    //// BUILD VIDEO URL
     url = '''
     https://www.youtube.com/embed/${widget.videoId}
     ?autoplay=${widget.autoPlay ? '1' : '0'}
     &mute=${widget.mute ? '1' : '0'}
-    &controls=1
+    &controls=${widget.hidenVideoControls ? '0' : '1'}
     &rel=0
     '''
         .replaceAll('\n', '');
     super.initState();
   }
 
+  //// BUILD WIDGET
   @override
   Widget build(BuildContext context) {
     return AbsorbPointer(
@@ -69,214 +88,119 @@ class _YoutubePlayerViewState extends State<YoutubePlayerView> {
             allowsBackForwardNavigationGestures: false,
             supportZoom: false,
           ),
+
+          //// OVERRIDE URL LOADING
           shouldOverrideUrlLoading: (controller, navigationAction) async {
             return NavigationActionPolicy.CANCEL;
           },
-          onWebViewCreated: (controller) {
-            // JavaScript handlers for different events
-            controller.addJavaScriptHandler(
-              handlerName: 'onVideoEnd',
-              callback: (args) {
-                widget.onVideoEnd?.call();
-                print('<<< Video ended >>>');
-                return null;
-              },
-            );
-            controller.addJavaScriptHandler(
-              handlerName: 'onVideoSeek',
-              callback: (args) {
-                final currentTime = args.first as double;
-                widget.onVideoSeek?.call(currentTime);
-                print('<<< Video seeked to: $currentTime seconds >>>');
-                return null;
-              },
-            );
-            controller.addJavaScriptHandler(
-              handlerName: 'onVideoTimeUpdate',
-              callback: (args) {
-                final currentTime = args.first as double;
-                widget.onVideoTimeUpdate?.call(currentTime);
-                print('<<< Current video time: $currentTime seconds >>>');
-                return null;
-              },
+
+          //// ON WEBVIEW CREATED
+          onWebViewCreated: (controller) async {
+            //// INITIALIZE CONTROLLERS
+            embedController = EmbedController(controller);
+            widget.callBackVideoController?.call(VideoController(controller));
+
+            //// HIDE VIDEO TITLE
+            await embedController?.hidenVideoTitle(hiden: true);
+
+            //// REMOVE CHANNEL IMAGE
+            await embedController?.removeChannleImage(
+              hidenChannelImage: widget.hidenChannelImage,
             );
 
-            controller.addJavaScriptHandler(
-              handlerName: 'onVideoStateChange',
-              callback: (args) {
-                final String state = args.first;
-                VideoState? videoState;
-
-                switch (state) {
-                  case 'playing':
-                    videoState = VideoState.playing;
-                    break;
-                  case 'paused':
-                    videoState = VideoState.paused;
-                    break;
-                  case 'muted':
-                    videoState = VideoState.muted;
-                    break;
-                  case 'unmuted':
-                    videoState = VideoState.unmuted;
-                    break;
-                }
-
-                if (videoState != null) {
-                  widget.onVideoStateChange?.call(videoState);
-                  print('<<< Video state changed: $state >>>');
-                }
-
-                return null;
-              },
-            );
-          },
-          onContentSizeChanged: (controller, width, height) async {
-            // controller.evaluateJavascript(source: javaScript);
-          },
-          onEnterFullscreen: (controller) {
-            // controller.evaluateJavascript(source: javaScript);
-          },
-          onExitFullscreen: (controller) {
-            // controller.evaluateJavascript(source: javaScript);
-          },
-          onLoadStop: (controller, uri) async {
-            // Inject JavaScript to listen for video events
-            await controller.evaluateJavascript(
-              source: """
-    // Ensure the video element is loaded
-    const checkVideoElement = () => {
-      const video = document.querySelector('video');
-      if (video) {
-        console.log('Video element found.');
-
-        // Add event listeners for video state changes
-        video.addEventListener('play', () => {
-          console.log('Video is playing.');
-          window.flutter_inappwebview.callHandler('onVideoStateChange', 'playing');
-        });
-
-        video.addEventListener('pause', () => {
-          console.log('Video is paused.');
-          if(!video.ended){
-            window.flutter_inappwebview.callHandler('onVideoStateChange', 'paused');
-          }
-        });
-
-        video.addEventListener('ended', () => {
-          console.log('Video ended.');
-          window.flutter_inappwebview.callHandler('onVideoEnd');
-        });
-
-        video.addEventListener('seeking', () => {
-          console.log('Video seeking to: ', video.currentTime);
-          window.flutter_inappwebview.callHandler('onVideoSeek', video.currentTime);
-        });
-
-        video.addEventListener('timeupdate', () => {
-          console.log('Current video time: ', video.currentTime);
-          window.flutter_inappwebview.callHandler('onVideoTimeUpdate', video.currentTime);
-        });
-
-// Detect mute and unmute events using the 'muted' property
-        let wasMuted = video.muted;
-        setInterval(() => {
-          if (video.muted && !wasMuted) {
-            console.log('Video muted.');
-            window.flutter_inappwebview.callHandler('onVideoStateChange', 'muted');
-          } else if (!video.muted && wasMuted) {
-            console.log('Video unmuted.');
-            window.flutter_inappwebview.callHandler('onVideoStateChange', 'unmuted');
-          }
-          wasMuted = video.muted;
-        }, 500);
-      } else {
-        console.log('Video element not found. Retrying...');
-        setTimeout(checkVideoElement, 500); // Retry until video is available
-      }
-    };
-    // Start checking for the video element
-    checkVideoElement();
-    """,
-            );
-
-            ////
+            //// IF SHARE BUTTON DISABLED
             if (!widget.enabledShareButton) {
-              // Remove overflow button (three dots menu)
-              await controller.evaluateJavascript(
-                source: """
-              var element = document.querySelector('.ytp-overflow-button');
-              if (element) {
-                element.remove();
-              }
-              """,
-              );
-
-              // Remove YouTube button
-              await controller.evaluateJavascript(
-                source: """
-              var element = document.querySelector('.ytp-youtube-button');
-              if (element) {
-                element.remove();
-              }
-              """,
-              );
-
-              // Remove Share button
-              await controller.evaluateJavascript(
-                source: """
-              var shareButton = document.querySelector('.ytp-share-button');
-              if (shareButton) {
-                shareButton.remove();
-              }
-              """,
-              );
-
-              // Remove More Options from settings menu
-              await controller.evaluateJavascript(
-                source: """
-              function removeUnwantedElements() {
-                // Remove More Options from settings menu
-                const settingsMenu = document.querySelector('.ytp-settings-menu');
-                if (settingsMenu) {
-                  const menuItems = settingsMenu.querySelectorAll('.ytp-menuitem');
-                  menuItems.forEach(item => {
-                    if (item.textContent.includes('More options')) {
-                      item.remove();
-                    }
-                  });
-                }
-                
-                // Ensure Share button stays removed
-                const shareButton = document.querySelector('.ytp-share-button');
-                if (shareButton) {
-                  shareButton.remove();
-                }
-              }
-              
-              // Initial removal
-              removeUnwantedElements();
-              
-              // Observer for dynamic content
-              const observer = new MutationObserver(() => {
-                removeUnwantedElements();
-              });
-              
-              // Start observing the document for added nodes
-              observer.observe(document.body, {
-                childList: true,
-                subtree: true
-              });
-            """,
-              );
-              ////
-              setState(
-                () {
-                  preventTap = false;
-                },
-              );
-              ////
+              //// REMOVE YOUTUBE WATERMARK
+              await embedController?.removeYoutubeWatermark();
             }
+
+            //// CALL BACK WHEN VIDEO END
+            embedController?.callBackWhenVideoEnd(
+              onVideoEnd: widget.onVideoEnd,
+            );
+
+            //// CALL BACK WHEN VIDEO SEEK
+            embedController?.callBackWhenVideoSeek(
+              onVideoSeek: widget.onVideoSeek,
+            );
+
+            //// CALL BACK WHEN VIDEO TIME UPDATE
+            embedController?.callBackWhenVideoStateChange(
+              onVideoStateChange: (videoState) async {
+                ////
+                widget.onVideoStateChange?.call(videoState);
+
+                //// IF AUTO PLAY DISABLED
+                if (!widget.autoPlay && videoState == VideoState.playing) {
+                  //// HIDEN VIDEO TITLE AFTER EDIT
+                  await embedController?.hidenVideoTitle(
+                    hiden: true,
+                  );
+
+                  //// WAIT FOR 500 milliseconds TO SHOW NEW VIDEO TITLE
+                  await Future.delayed(
+                    Duration(milliseconds: 500),
+                    () async {
+                      //// CHECK IF CUSTOM VIDEO TITLE
+                      if (widget.customVideoTitle != null) {
+                        //// CHANGE VIDEO TITLE
+                        await embedController?.changeVideoTitle(
+                          customVideoTitle: widget.customVideoTitle!,
+                        );
+
+                        //// SHOW VIDEO TITLE AFTER EDIT
+                        await embedController?.hidenVideoTitle(
+                          hiden: false,
+                        );
+                      }
+                      ////
+                    },
+                  );
+                }
+
+                ////
+              },
+            );
+          },
+
+          //// ON LOAD STOP
+          onLoadStop: (controller, uri) async {
+            //// HIDE VIDEO TITLE
+            await embedController?.hidenVideoTitle();
+
+            //// REMOVE CHANNEL IMAGE
+            await embedController?.removeChannleImage(
+              hidenChannelImage: widget.hidenChannelImage,
+            );
+
+            //// REMOVE YOUTUBE WATERMARK
+            await embedController?.removeYoutubeWatermark();
+
+            //// CREATE VIDEO LISTENERS
+            await embedController?.createVideoListeners();
+
+            if (!widget.enabledShareButton) {
+              //// REMOVE UI ELEMENTS
+              await embedController?.removeThreeDotsMenu();
+              await embedController?.removeYoutubeButton();
+              await embedController?.removeShareButton();
+              await embedController?.removeMoreOptionsButton();
+
+              //// CHECK IF CUSTOM VIDEO TITLE
+              if (widget.customVideoTitle != null) {
+                //// CHANGE VIDEO TITLE
+                await embedController?.changeVideoTitle(
+                  customVideoTitle: widget.customVideoTitle!,
+                );
+                //// SHOW VIDEO TITLE AFTER EDIT
+                await embedController?.hidenVideoTitle(hiden: false);
+              }
+            }
+
+            //// UPDATE STATE
+            setState(() {
+              preventTap = false;
+            });
           },
         ),
       ),
