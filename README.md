@@ -35,7 +35,7 @@ Add the following dependency to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  youtube_player_embed: ^1.2.0
+  youtube_player_embed: ^1.3.0
 ```
 
 Run the following command to install the package:
@@ -173,13 +173,11 @@ flutter run
 
 ## Changelog
 
-### v1.2.0
+### v1.3.0
 - Added programmatic playback controls: Play, Pause, Seek, Mute, Unmute.
 - Added support for custom video titles.
 - Enhanced dynamic hiding of video controls and channel images.
 - Improved error handling for invalid video IDs.
-
-### v1.1.0
 - Added advanced event listeners for video state, time updates, and seek events.
 - Added mute/unmute detection.
 - Improved support for dynamic UI updates to remove share and branding buttons.
