@@ -35,7 +35,7 @@ Add the following dependency to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  youtube_player_embed: ^1.3.0
+  youtube_player_embed: ^1.4.0
 ```
 
 Run the following command to install the package:
@@ -69,41 +69,100 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    VideoController? videoController;
+
     return MaterialApp(
       title: 'YouTube Player Embed Demo',
       home: Scaffold(
         appBar: AppBar(
           title: const Text('YouTube Player Example'),
         ),
-        body: Center(
-          child: YoutubePlayerView(
-            videoId: 'shorts_video_id', // Replace with a YouTube Shorts or normal video ID
-            autoPlay: true,
-            mute: false,
-            enabledShareButton: false,
-            aspectRatio: 16 / 9,
-            onVideoEnd: () {
-              print("Video has ended");
-            },
-            onVideoSeek: (currentTime) => print("Seeked to $currentTime seconds"),
-            onVideoStateChange: (state) {
-              switch (state) {
-                case VideoState.playing:
-                  print("Video is playing");
-                  break;
-                case VideoState.paused:
-                  print("Video is paused");
-                  break;
-                case VideoState.muted:
-                  print("Video is muted");
-                  break;
-                case VideoState.unmuted:
-                  print("Video is unmuted");
-                  break;
-              }
-            },
-            onVideoTimeUpdate: (currentTime) => print("Current time: $currentTime seconds"),
-          ),
+        body: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            ////
+            YoutubePlayerEmbed(
+              key: ValueKey(currentPlayingVideo), // Unique key for the video (optional)
+              callBackVideoController: (controller) {
+                videoController = controller;
+              },
+              videoId:
+                  currentPlayingVideo, // 'shorts_video_id' Replace with a YouTube Shorts or normal video ID
+              customVideoTitle: "بسم الله الرحمن الرحيم",
+              autoPlay: false,
+              hidenVideoControls: false,
+              mute: false,
+              enabledShareButton: false,
+              hidenChannelImage: true,
+              aspectRatio: 16 / 9,
+              onVideoEnd: () {
+                print("video ended");
+              },
+              onVideoSeek: (currentTime) =>
+                  print("Seeked to $currentTime seconds"),
+              onVideoTimeUpdate: (currentTime) =>
+                  print("Current time: $currentTime seconds"),
+              onVideoStateChange: (state) {
+                switch (state) {
+                  case VideoState.playing:
+                    print("Video is playing");
+                    break;
+                  case VideoState.paused:
+                    print("Video is paused");
+                    break;
+                  case VideoState.muted:
+                    print("Video is muted");
+                    break;
+                  case VideoState.unmuted:
+                    print("Video is unmuted");
+                    break;
+                }
+              },
+            ),
+            ////
+            const SizedBox(height: 100),
+            ////
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                ////
+                ElevatedButton(
+                  onPressed: () async {
+                    await videoController?.playVideo();
+                  },
+                  child: const Text("Play"),
+                ),
+                ////
+                ElevatedButton(
+                  onPressed: () async {
+                    await videoController?.pauseVideo();
+                  },
+                  child: const Text("pause"),
+                ),
+                ////
+                ElevatedButton(
+                  onPressed: () async {
+                    await videoController?.muteOrUnmuteVideo();
+                  },
+                  child: const Text("mute / unmute"),
+                ),
+                ////
+              ],
+            ),
+            ////
+            const SizedBox(height: 50),
+            ////
+            ElevatedButton(
+              onPressed: () async {
+                await videoController?.seekTo(
+                  time: 4,
+                );
+              },
+              child: const Text("seek to 4 seconed (for test)"),
+            ),
+            ////
+          ],
         ),
       ),
     );
@@ -173,7 +232,7 @@ flutter run
 
 ## Changelog
 
-### v1.3.0
+### v1.4.0
 - Added programmatic playback controls: Play, Pause, Seek, Mute, Unmute.
 - Added support for custom video titles.
 - Enhanced dynamic hiding of video controls and channel images.
