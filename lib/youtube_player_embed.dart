@@ -110,7 +110,7 @@ class _YoutubePlayerEmbedState extends State<YoutubePlayerEmbed> {
             //// IF SHARE BUTTON DISABLED
             if (!widget.enabledShareButton) {
               //// REMOVE YOUTUBE WATERMARK
-              await embedController?.removeYoutubeWatermark();
+              await embedController?.removeMoreOptionsAndShareButtons();
             }
 
             //// CALL BACK WHEN VIDEO END
@@ -156,7 +156,6 @@ class _YoutubePlayerEmbedState extends State<YoutubePlayerEmbed> {
                     },
                   );
                 }
-
                 ////
               },
             );
@@ -164,6 +163,10 @@ class _YoutubePlayerEmbedState extends State<YoutubePlayerEmbed> {
 
           //// ON LOAD STOP
           onLoadStop: (controller, uri) async {
+            await embedController?.changeVideoTitle(
+              customVideoTitle: widget.customVideoTitle!,
+            );
+
             //// HIDE VIDEO TITLE
             await embedController?.hidenVideoTitle();
 
@@ -172,28 +175,22 @@ class _YoutubePlayerEmbedState extends State<YoutubePlayerEmbed> {
               hidenChannelImage: widget.hidenChannelImage,
             );
 
-            //// REMOVE YOUTUBE WATERMARK
-            await embedController?.removeYoutubeWatermark();
-
             //// CREATE VIDEO LISTENERS
             await embedController?.createVideoListeners();
 
             if (!widget.enabledShareButton) {
               //// REMOVE UI ELEMENTS
-              await embedController?.removeThreeDotsMenu();
-              await embedController?.removeYoutubeButton();
-              await embedController?.removeShareButton();
-              await embedController?.removeMoreOptionsButton();
+              await embedController?.removeMoreOptionsAndShareButtons();
+            }
 
-              //// CHECK IF CUSTOM VIDEO TITLE
-              if (widget.customVideoTitle != null) {
-                //// CHANGE VIDEO TITLE
-                await embedController?.changeVideoTitle(
-                  customVideoTitle: widget.customVideoTitle!,
-                );
-                //// SHOW VIDEO TITLE AFTER EDIT
-                await embedController?.hidenVideoTitle(hiden: false);
-              }
+            //// CHECK IF CUSTOM VIDEO TITLE
+            if (widget.customVideoTitle != null) {
+              //// CHANGE VIDEO TITLE
+              await embedController?.changeVideoTitle(
+                customVideoTitle: widget.customVideoTitle!,
+              );
+              //// SHOW VIDEO TITLE AFTER EDIT
+              await embedController?.hidenVideoTitle(hiden: false);
             }
 
             //// UPDATE STATE

@@ -10,81 +10,93 @@ class EmbedController {
   }) async {
     await controller.evaluateJavascript(
       source: """
-                document.querySelector('a.ytp-title-link').innerText = '${customVideoTitle}';;
+                document.querySelector('a.ytp-title-link').innerText = '${customVideoTitle}';
+                document.querySelector('.ytp-title-text').firstChild.text = '${customVideoTitle}';
               """,
     );
   }
 
-  Future<void> removeMoreOptionsButton() async {
-    await controller.evaluateJavascript(
-      source: """
-                    function removeUnwantedElements() {
-                      // Remove More Options from settings menu
-                      const settingsMenu = document.querySelector('.ytp-settings-menu');
-                      if (settingsMenu) {
-                        const menuItems = settingsMenu.querySelectorAll('.ytp-menuitem');
-                        menuItems.forEach(item => {
-                          if (item.textContent.includes('More options')) {
-                            item.remove();
-                          }
-                        });
-                      }
-                      
-                      // Ensure Share button stays removed
-                      const shareButton = document.querySelector('.ytp-share-button');
-                      if (shareButton) {
-                        shareButton.remove();
-                      }
+  Future<void> removeMoreOptionsAndShareButtons() async {
+    await controller.evaluateJavascript(source: """
+              var style = document.createElement('style');
+              style.textContent = `
+                .ytp-overflow-button,
+                .ytp-youtube-button,
+                .ytp-share-button,
+                .ytp-menuitem[role="menuitem"][data-layer="menu-popup"],
+                .ytp-button[data-title-no-tooltip="Share"],
+                .ytp-button[aria-label*="Share"],
+                .ytp-menuitem[aria-label*="More options"],
+                .ytp-menuitem[aria-label*="خيارات إضافية"],
+                .ytp-button[aria-label*="مشاركة"],
+                .ytp-chrome-top-buttons,
+                .ytp-watch-later-button,
+                .ytp-watermark,
+              {
+                display: none !important;
+              }
+              `;
+              document.head.appendChild(style);
+
+              function removeUnwantedElements() {
+                // Remove elements by class and data attributes
+                const elementsToRemove = [
+                  '.ytp-overflow-button',
+                  '.ytp-youtube-button',
+                  '.ytp-share-button',
+                  '.ytp-menuitem[role="menuitem"][data-layer="menu-popup"]',
+                  '.ytp-chrome-top-buttons',
+                  '.ytp-watch-later-button',
+                  '.ytp-watermark',
+                  '.ytp-button[aria-label*="المشاهدة على"]', 
+                  '.ytp-impression-link img' 
+                ];
+
+                elementsToRemove.forEach(selector => {
+                  const elements = document.querySelectorAll(selector);
+                  elements.forEach(el => el.remove());
+                });
+
+                // Remove settings menu items
+                const settingsMenu = document.querySelector('.ytp-settings-menu');
+                if (settingsMenu) {
+                  const menuItems = settingsMenu.querySelectorAll('.ytp-menuitem');
+                  menuItems.forEach(item => {
+                    const ariaLabel = item.getAttribute('aria-label') || '';
+                    if (
+                      ariaLabel.includes('More options') || 
+                      ariaLabel.includes('خيارات إضافية') ||
+                      ariaLabel.includes('Watch on') ||
+                      ariaLabel.includes('شاهد على') ||
+                      ariaLabel.includes('المشاهدة على') || 
+                      item.textContent.includes('More options') ||
+                      item.textContent.includes('خيارات إضافية') ||
+                      item.textContent.includes('Watch on') ||
+                      item.textContent.includes('شاهد على') ||
+                      item.textContent.includes('المشاهدة على') 
+                    ) {
+                      item.remove();
                     }
-
-                    // Initial removal
-                    removeUnwantedElements();
-
-                    // Observer for dynamic content
-                    const observer = new MutationObserver(() => {
-                      removeUnwantedElements();
-                    });
-
-                    // Start observing the document for added nodes
-                    observer.observe(document.body, {
-                      childList: true,
-                      subtree: true
-                    });
-                                """,
-    );
-  }
-
-  Future<void> removeShareButton() async {
-    await controller.evaluateJavascript(
-      source: """
-              var shareButton = document.querySelector('.ytp-share-button');
-              if (shareButton) {
-                shareButton.remove();
+                  });
+                }
               }
-              """,
-    );
-  }
 
-  Future<void> removeYoutubeButton() async {
-    await controller.evaluateJavascript(
-      source: """
-              var element = document.querySelector('.ytp-youtube-button');
-              if (element) {
-                element.remove();
-              }
-              """,
-    );
-  }
+              // Initial removal
+              removeUnwantedElements();
 
-  Future<void> removeThreeDotsMenu() async {
-    await controller.evaluateJavascript(
-      source: """
-              var element = document.querySelector('.ytp-overflow-button');
-              if (element) {
-                element.remove();
-              }
-              """,
-    );
+              // Create an observer instance
+              const observer = new MutationObserver((mutations) => {
+                removeUnwantedElements();
+              });
+
+              // Start observing the document with the configured parameters
+              observer.observe(document.body, {
+                childList: true,
+                subtree: true,
+                characterData: true,
+                attributes: true
+              });
+              """);
   }
 
   Future<void> createVideoListeners() async {
@@ -232,6 +244,7 @@ class EmbedController {
     await controller.evaluateJavascript(
       source: """
                 document.querySelector('.ytp-watermark').style.display = 'none';  
+                decument.querySelector('.ytp-impression-link ').style.display = 'none';
                 """,
     );
   }
@@ -242,7 +255,7 @@ class EmbedController {
     if (hidenChannelImage) {
       await controller.evaluateJavascript(
         source: """
-                document.querySelector('.ytp-title-channel').remove();  
+                document.querySelector('.ytp-title-channel').style.display = 'none';   
                 """,
       );
     }
@@ -260,10 +273,11 @@ class EmbedController {
     if (hiden) {
       return """
              document.querySelector('.ytp-title').style.display = 'none';
+             document.querySelector('.ytp-title-text').firstChild.text = '';
             """;
     } else {
       return """
-             document.querySelector('.ytp-title').style.display = '';
+             document.querySelector('.ytp-title').style.display = ''; 
             """;
     }
   }
