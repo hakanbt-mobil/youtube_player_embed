@@ -86,6 +86,10 @@ class _MyAppState extends State<MyApp> {
                   case VideoState.unmuted:
                     print("Video is unmuted");
                     break;
+                  case VideoState.fullscreen:
+                    print("Video is in fullscreen");
+                  case VideoState.normalView:
+                    print("Video is in normal view");
                 }
               },
             ),

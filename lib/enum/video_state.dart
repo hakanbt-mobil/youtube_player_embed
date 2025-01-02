@@ -4,4 +4,6 @@ enum VideoState {
   paused,
   muted,
   unmuted,
+  fullscreen,
+  normalView,
 }

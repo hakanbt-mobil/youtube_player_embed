@@ -113,6 +113,12 @@ class _YoutubePlayerEmbedState extends State<YoutubePlayerEmbed> {
               await embedController?.removeMoreOptionsAndShareButtons();
             }
 
+            await embedController?.onFullScreenStateChanged(
+              onVideoStateChange: (videoState) {
+                widget.onVideoStateChange?.call(videoState);
+              },
+            );
+
             //// CALL BACK WHEN VIDEO END
             embedController?.callBackWhenVideoEnd(
               onVideoEnd: widget.onVideoEnd,

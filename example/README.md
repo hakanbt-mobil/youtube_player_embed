@@ -35,7 +35,7 @@ Add the following dependency to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  youtube_player_embed: ^1.4.0
+  youtube_player_embed: ^1.6.0
 ```
 
 Run the following command to install the package:
@@ -116,6 +116,12 @@ class MyApp extends StatelessWidget {
                     break;
                   case VideoState.unmuted:
                     print("Video is unmuted");
+                    break;
+                  case VideoState.fullscreen:
+                    print("Video is in fullscreen");
+                    break;
+                  case VideoState.normalView:
+                    print("Video is in normal view");
                     break;
                 }
               },
@@ -215,24 +221,61 @@ flutter run
 
 ---
 
-## Troubleshooting
+## Setup
 
-- Ensure you have added the `flutter_inappwebview` dependencies correctly.
-- For iOS, add the following to your `Info.plist`:
+### Android Setup
+
+Ensure you have added the following permissions in your `AndroidManifest.xml`:
 
 ```xml
-<key>NSAppTransportSecurity</key>
-<dict>
-  <key>NSAllowsArbitraryLoads</key>
-  <true/>
-</dict>
+<uses-permission android:name="android.permission.INTERNET" />
+<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 ```
+
+### iOS Setup
+
+To ensure proper functionality on iOS, follow these steps:
+
+1. **Update the `Info.plist`**  
+   Add the following permissions in your `Info.plist` file:
+
+   ```xml
+    <key>NSAppTransportSecurity</key>
+    <dict>
+      <key>NSAllowsArbitraryLoads</key>
+      <true/>
+    </dict>
+    <key>io.flutter.embedded_views_preview</key>
+    <true/>
+   ```
+
+
+If you still have this problem, try to edit iOS Podfile like this
+
+2. **Edit the Podfile**  
+   Add the following to your iOS `Podfile` if you encounter issues:
+
+   ```ruby
+   target 'Runner' do
+     use_frameworks!  # required by flutter_inappwebview
+     ...
+   end
+
+   post_install do |installer|
+     installer.pods_project.targets.each do |target|
+       target.build_configurations.each do |config|
+         config.build_settings['SWIFT_VERSION'] = '5.0'  # required by flutter_inappwebview
+         config.build_settings['ENABLE_BITCODE'] = 'NO'
+       end
+     end
+   end
+   ```
 
 ---
 
 ## Changelog
 
-### v1.4.0
+### v1.6.0
 - Added programmatic playback controls: Play, Pause, Seek, Mute, Unmute.
 - Added support for custom video titles.
 - Enhanced dynamic hiding of video controls and channel images.

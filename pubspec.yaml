@@ -11,6 +11,6 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  flutter_inappwebview: ^6.0.0
+  flutter_inappwebview: ^6.1.5
 
 

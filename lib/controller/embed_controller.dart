@@ -99,6 +99,44 @@ class EmbedController {
               """);
   }
 
+  Future<void> onFullScreenStateChanged({
+    required Function(VideoState state)? onVideoStateChange,
+  }) async {
+    // Inject JavaScript to listen for fullscreen changes
+    await controller.evaluateJavascript(source: """
+    document.addEventListener('fullscreenchange', function() {
+      if (document.fullscreenElement) {
+        window.flutter_inappwebview.callHandler('onEnterFullscreen');
+      } else {
+        window.flutter_inappwebview.callHandler('onExitFullscreen');
+      }
+    });
+  """);
+
+    // Register JavaScript handlers for fullscreen events
+    controller.addJavaScriptHandler(
+      handlerName: 'onEnterFullscreen',
+      callback: (args) {
+        // Notify Flutter when entering fullscreen
+        print('Entered fullscreen');
+        if (onVideoStateChange != null) {
+          onVideoStateChange.call(VideoState.fullscreen);
+        }
+      },
+    );
+
+    controller.addJavaScriptHandler(
+      handlerName: 'onExitFullscreen',
+      callback: (args) {
+        // Notify Flutter when exiting fullscreen
+        print('Exited fullscreen');
+        if (onVideoStateChange != null) {
+          onVideoStateChange.call(VideoState.normalView);
+        }
+      },
+    );
+  }
+
   Future<void> createVideoListeners() async {
     await controller.evaluateJavascript(
       source: """
