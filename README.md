@@ -1,7 +1,9 @@
 # youtube_player_embed
 
 [![Pub Version](https://img.shields.io/pub/v/youtube_player_embed)](https://pub.dev/packages/youtube_player_embed)
-[![License](https://img.shields.io/badge/license-BSD--2--Clause-blue)](https://opensource.org/licenses/BSD-2-Clause)
+<a href="https://github.com/mohamedegy107/youtube_player_embed/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-BSD--3-blueviolet" alt="BSD-3 License"></a>
+<a href="https://github.com/mohamedegy107/youtube_player_embed"><img src="https://img.shields.io/github/languages/top/mohamedegy107/youtube_player_embed?color=9cf" alt="Top Language"></a>
+<a href="https://github.com/mohamedegy107/youtube_player_embed/issues"><img src="https://img.shields.io/github/issues/mohamedegy107/youtube_player_embed" alt="GitHub issues"></a>
 [![GitHub Stars](https://img.shields.io/github/stars/mohamedegy107/youtube_player_embed?style=social)](https://github.com/mohamedegy107/youtube_player_embed)
 
 `youtube_player_embed` is a lightweight and customizable Flutter package that allows developers to embed YouTube videos, including YouTube Shorts, directly into their Flutter applications using an InAppWebView. With this package, you can seamlessly integrate videos with advanced event handling, autoplay, mute, and aspect ratio customization.
