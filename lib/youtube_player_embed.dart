@@ -5,6 +5,8 @@ import 'controller/embed_controller.dart';
 import 'controller/video_controller.dart';
 import 'enum/video_state.dart';
 
+import 'dart:io' show Platform;
+
 //// YOUTUBE PLAYER VIEW WIDGET
 class YoutubePlayerEmbed extends StatefulWidget {
   //// PROPERTIES
@@ -86,11 +88,21 @@ class _YoutubePlayerEmbedState extends State<YoutubePlayerEmbed> {
             iframeAllowFullscreen: true,
             allowsBackForwardNavigationGestures: false,
             supportZoom: false,
+            // applicationNameForUserAgent: "no-referrer-when-downgrade",
           ),
 
           //// OVERRIDE URL LOADING
           shouldOverrideUrlLoading: (controller, navigationAction) async {
-            return NavigationActionPolicy.CANCEL;
+            if (Platform.isAndroid) {
+              return NavigationActionPolicy.CANCEL;
+            } else {
+              if (navigationAction.request.url.toString() !=
+                  url.replaceAll(" ", "")) {
+                return NavigationActionPolicy.CANCEL;
+              } else {
+                return NavigationActionPolicy.ALLOW;
+              }
+            }
           },
 
           //// ON WEBVIEW CREATED

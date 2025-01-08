@@ -118,7 +118,6 @@ class EmbedController {
       handlerName: 'onEnterFullscreen',
       callback: (args) {
         // Notify Flutter when entering fullscreen
-        print('Entered fullscreen');
         if (onVideoStateChange != null) {
           onVideoStateChange.call(VideoState.fullscreen);
         }
@@ -129,7 +128,6 @@ class EmbedController {
       handlerName: 'onExitFullscreen',
       callback: (args) {
         // Notify Flutter when exiting fullscreen
-        print('Exited fullscreen');
         if (onVideoStateChange != null) {
           onVideoStateChange.call(VideoState.normalView);
         }
@@ -244,8 +242,9 @@ class EmbedController {
       handlerName: 'onVideoTimeUpdate',
       callback: (args) {
         final currentTime = args.first as double;
+
         onVideoTimeUpdate?.call(currentTime);
-        print('<<< Current video time: $currentTime seconds >>>');
+
         return null;
       },
     );
@@ -258,8 +257,9 @@ class EmbedController {
       handlerName: 'onVideoSeek',
       callback: (args) {
         final currentTime = args.first as double;
+
         onVideoSeek?.call(currentTime);
-        print('<<< Video seeked to: $currentTime seconds >>>');
+
         return null;
       },
     );
@@ -272,7 +272,7 @@ class EmbedController {
       handlerName: 'onVideoEnd',
       callback: (args) {
         onVideoEnd?.call();
-        print('<<< Video ended >>>');
+
         return null;
       },
     );
