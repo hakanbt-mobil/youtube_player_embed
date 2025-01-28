@@ -59,7 +59,7 @@ class _YoutubePlayerEmbedState extends State<YoutubePlayerEmbed> {
   void initState() {
     //// BUILD VIDEO URL
     url = '''
-    https://www.youtube.com/embed/${widget.videoId}
+    https://www.youtube.com/shorts/${widget.videoId}
     ?autoplay=${widget.autoPlay ? '1' : '0'}
     &mute=${widget.mute ? '1' : '0'}
     &controls=${widget.hidenVideoControls ? '0' : '1'}
